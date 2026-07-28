@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-copy="notFound.title"></title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>⚽</text></svg>" />
+  <!-- root-absolute: Pages serves this page for any missing path, so a relative
+       href would resolve against a directory that doesn't exist (/foo/bar/) -->
+  <link rel="stylesheet" href="/styles.css?v=36" />
+  <style>
+    body { overflow: auto; }
+    .nf { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; font-family: var(--sans); color: var(--ink); text-align: center; padding: 24px; }
+    .nf .mark { font-size: 3rem; opacity: .4; }
+    .nf a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="nf">
+    <div class="mark">🥅</div>
+    <h1 style="font-family:var(--display);margin:0" data-copy="notFound.heading"></h1>
+    <p data-copy="notFound.body"></p>
+  </div>
+  <script src="/config.js?v=36"></script>
+  <script src="/copy.js?v=36"></script>
+  <script src="/analytics.js?v=36"></script>
+</body>
+</html>

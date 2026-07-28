@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-copy="titles.about"></title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>ℹ️</text></svg>" />
+  <link rel="stylesheet" href="styles.css?v=36" />
+  <style>
+    body { overflow: auto; }
+    .shell { max-width: 760px; margin: 0 auto; padding: 20px 22px 60px; font-family: var(--sans); color: var(--ink); line-height: 1.6; }
+    .top { font-family: var(--display); font-weight: 700; font-size: 1.15rem; margin-bottom: 18px; }
+    .top a { color: inherit; text-decoration: none; }
+    h1 { font-family: var(--display); font-size: 1.7rem; letter-spacing: -0.02em; margin: 0 0 4px; }
+    h2 { font-family: var(--display); font-size: 1.15rem; margin: 28px 0 6px; }
+    p, li { font-size: .95rem; color: var(--ink); }
+    .muted { color: var(--ink-2); }
+    a { color: var(--accent); }
+    code { background: #f3f4f6; border-radius: 4px; padding: 1px 5px; font-size: .85em; }
+    details.comps { margin: 10px 0 0; border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; }
+    details.comps summary { cursor: pointer; font-weight: 600; font-size: .92rem; }
+    #faq details.comps { margin-bottom: 10px; }
+    #faq details.comps p, #faq details.comps li { font-size: .92rem; }
+    .faq-fig { margin: 12px 0 4px; }
+    .faq-fig img { max-width: 100%; height: auto; display: block; }
+    .faq-fig figcaption { font-size: .82rem; margin-top: 4px; }
+    details.comps h3 { font-size: .9rem; margin: 14px 0 4px; }
+    .comp-table { width: 100%; border-collapse: collapse; font-size: .82rem; font-variant-numeric: tabular-nums; }
+    .comp-table td, .comp-table th { padding: 3px 8px; border-bottom: 1px solid var(--line); text-align: left; }
+    .comp-table td:nth-child(2), .comp-table th:nth-child(2) { text-align: right; }
+    .comp-scroll { max-height: 340px; overflow-y: auto; margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <header class="page-head">
+    <div class="ph-title"><a href="index.html"></a></div>
+    <nav class="ph-nav" data-page="about"></nav>
+    <div class="ph-meta" id="phMeta"></div>
+  </header>
+  <div class="shell">
+    <h1 data-copy="about.h1"></h1>
+
+    <h2 data-copy="about.dataH2"></h2>
+    <p data-copy="about.data"></p>
+    <p class="muted" id="figures" data-copy="about.figuresFallback"></p>
+    <details class="comps">
+      <summary data-copy="about.compsSummary"></summary>
+      <div id="comp-lists"><p class="muted" data-copy="common.loading"></p></div>
+    </details>
+
+    <h2 data-copy="about.faqH2"></h2>
+    <div id="faq">
+      <details class="comps">
+        <summary data-copy="about.faqQ1"></summary>
+        <div data-copy="about.faqA1"></div>
+      </details>
+      <details class="comps">
+        <summary data-copy="about.faqQ2"></summary>
+        <div data-copy="about.faqA2"></div>
+        <figure class="faq-fig">
+          <img src="data/faq_skill_pop_vs_attributed.svg" loading="lazy"
+               data-copy-alt="about.faqFigAlt" />
+          <figcaption class="muted" data-copy="about.faqFigCap"></figcaption>
+        </figure>
+      </details>
+      <details class="comps">
+        <summary data-copy="about.faqQ3"></summary>
+        <div data-copy="about.faqA3"></div>
+      </details>
+      <details class="comps">
+        <summary data-copy="about.faqQ4"></summary>
+        <div data-copy="about.faqA4"></div>
+      </details>
+      <details class="comps">
+        <summary data-copy="about.faqQ5"></summary>
+        <div data-copy="about.faqA5"></div>
+      </details>
+      <details class="comps">
+        <summary data-copy="about.faqQ6"></summary>
+        <div data-copy="about.faqA6"></div>
+      </details>
+    </div>
+
+    <h2 data-copy="about.contactH2"></h2>
+    <p data-copy="about.contact"></p>
+  </div>
+  <script src="config.js?v=36"></script>
+  <script src="copy.js?v=36"></script>
+  <script src="api-shim.js?v=36"></script>
+  <script src="header.js?v=36"></script>
+  <script src="analytics.js?v=36"></script>
+  <script>
+    fetch("/api/site_meta").then((r) => r.json()).then((m) => {
+      const bits = [];
+      if (m.n_pen != null) bits.push(T("about.figModelled", { n: m.n_pen.toLocaleString() }));
+      if (m.n_taker && m.n_gk) bits.push(T("about.figPlayers", {
+        takers: m.n_taker.toLocaleString(), keepers: m.n_gk.toLocaleString() }));
+      if (m.n_placed_pen != null) bits.push(T("about.figPlaced", { n: m.n_placed_pen.toLocaleString() }));
+      if (m.exported_at) bits.push(T("about.figUpdated", { date: m.exported_at }));
+      if (bits.length) document.getElementById("figures").textContent = bits.join(" · ");
+      const latest = [m.tm_latest, m.ws_latest].filter(Boolean).sort().pop();
+      if (latest) document.getElementById("phMeta").textContent =
+        T("meta.dataThrough", { latest });
+
+      // the FAQ quotes model-derived numbers; refill its copy with the `faq`
+      // blob (server.py _faq_assets) so the prose can't drift from the tables
+      const f = m.faq;
+      if (f) {
+        const num = (x) => x.toLocaleString();
+        const pp1 = (x) => (x < 0 ? "−" : "+") + Math.abs(100 * x).toFixed(1);
+        const v = {
+          nDrawsShipped: num(f.n_draws_shipped), nDrawsTotal: num(f.n_draws_total),
+          basePct: Math.round(100 * f.base),
+          nStar: f.n_star_taker, nTakers: num(f.n_takers),
+          nOverStar: f.n_over_nstar, nCiTakers: f.n_ci_takers,
+          topName: f.top.name, topPp: pp1(f.top.median),
+          topLo: pp1(f.top.lo), topHi: pp1(f.top.hi),
+          topConv: Math.round(100 * (f.base + f.top.median)),
+          topConvHi: Math.round(100 * (f.base + f.top.hi)),
+          p999: Math.round(100 * f.p999),
+          oneIn: num(Math.round(f.one_in / 10) * 10),
+          nNinety: num(Math.round(f.n_ninety / 10) * 10),
+        };
+        v.ciClause = T(f.n_ci_takers ? "about.faqCiSome" : "about.faqCiNone", v);
+        for (const el of document.querySelectorAll("#faq [data-copy]"))
+          el.innerHTML = T(el.dataset.copy, v);
+      }
+    }).catch(() => {});
+
+    // competitions list, loaded once the collapsible is opened
+    const comps = document.querySelector("details.comps");
+    let loaded = false;
+    comps.addEventListener("toggle", () => {
+      if (!comps.open || loaded) return;
+      loaded = true;
+      fetch("/api/competitions").then((r) => r.json()).then((d) => {
+        const esc = (s) => String(s ?? "").replace(/[&<>]/g,
+          (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+        const yr = (s) => (s ? String(s).slice(0, 4) : "");
+        const table = (rows, title) =>
+          `<h3>${title} (${rows.length})</h3><div class="comp-scroll"><table class="comp-table">` +
+          `<thead><tr><th>${T("about.compsColName")}</th><th>${T("about.compsColN")}</th>` +
+          `<th>${T("about.compsColCovered")}</th></tr></thead><tbody>` +
+          rows.map((c) => `<tr><td>${esc(c.name)}</td><td>${c.n.toLocaleString()}</td>` +
+            `<td>${esc(yr(c.first))}–${esc(yr(c.last))}</td></tr>`).join("") +
+          `</tbody></table></div>`;
+        document.getElementById("comp-lists").innerHTML =
+          table(d.archive, T("about.compsArchive")) + table(d.event, T("about.compsEvent"));
+      }).catch(() => {
+        document.getElementById("comp-lists").textContent = T("about.compsError");
+      });
+    });
+  </script>
+</body>
+</html>

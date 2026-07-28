@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-copy="titles.models"></title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>📈</text></svg>" />
+  <link rel="stylesheet" href="styles.css?v=36" />
+  <style>
+    body { overflow: auto; }
+    .shell { max-width: 780px; margin: 0 auto; padding: 20px 22px 60px; font-family: var(--sans); color: var(--ink); line-height: 1.6; }
+    .top { font-family: var(--display); font-weight: 700; font-size: 1.15rem; margin-bottom: 18px; }
+    .top a { color: inherit; text-decoration: none; }
+    h1 { font-family: var(--display); font-size: 1.7rem; letter-spacing: -0.02em; margin: 0 0 4px; }
+    h2 { font-family: var(--display); font-size: 1.2rem; margin: 34px 0 6px; }
+    p, li { font-size: .95rem; }
+    .muted { color: var(--ink-2); }
+    a { color: var(--accent); }
+    code { background: #f3f4f6; border-radius: 4px; padding: 1px 5px; font-size: .85em; }
+    .dist-canvas { width: 100%; height: auto; display: block; margin: 10px 0 2px; }
+    .extremes { font-size: .84rem; color: var(--ink-2); margin: 2px 0 0; }
+    .extremes b { color: var(--ink); font-weight: 600; }
+    details.brms { margin: 12px 0 0; border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; }
+    details.brms summary { cursor: pointer; font-weight: 600; font-size: .92rem; }
+    details.brms pre { overflow-x: auto; font-size: .74rem; line-height: 1.45; background: #f7f7f5; border-radius: 8px; padding: 10px 12px; }
+  </style>
+</head>
+<body>
+  <header class="page-head">
+    <div class="ph-title"><a href="index.html"></a></div>
+    <nav class="ph-nav" data-page="models"></nav>
+    <div class="ph-meta" id="phMeta"></div>
+  </header>
+  <div class="shell">
+    <h1 data-copy="models.h1"></h1>
+    <p class="muted" data-copy="models.intro"></p>
+    <div id="sections"><p class="muted" data-copy="common.loading"></p></div>
+    <!-- not a fitted model — it consumes the posteriors of the ones above, so it
+         is static markup rather than a SECTIONS entry in models.js -->
+    <section>
+      <h2 data-copy="models.jointTitle"></h2>
+      <p data-copy="models.jointBlurb"></p>
+    </section>
+    <p class="muted" style="margin-top:28px" data-copy="models.footnote"></p>
+  </div>
+  <script src="config.js?v=36"></script>
+  <script src="copy.js?v=36"></script>
+  <script src="api-shim.js?v=36"></script>
+  <script src="header.js?v=36"></script>
+  <script src="analytics.js?v=36"></script>
+  <script src="models.js?v=36"></script>
+</body>
+</html>

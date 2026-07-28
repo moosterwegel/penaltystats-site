@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-copy="titles.compare"></title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>⚔️</text></svg>" />
+  <link rel="stylesheet" href="styles.css?v=36" />
+  <style>
+    /* full-viewport dashboard shell: no page scroll, panels flex to fit */
+    /* the shared page-head (styles.css) sits above; the shell is the content
+       area under it, so it flexes into what .page leaves rather than owning
+       the viewport height itself */
+    .shell { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; padding: 14px 18px 16px; box-sizing: border-box; font-family: var(--sans); color: var(--ink); gap: 12px; }
+    .head { flex: 0 0 auto; display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; }
+    .roleseg { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    .roleseg button { border: 0; background: #fff; padding: 8px 14px; font: inherit; cursor: pointer; }
+    .roleseg button.on { background: var(--accent); color: #fff; }
+    .search { position: relative; }
+    .search label { display: block; font-size: 11px; color: #5a6b73; margin-bottom: 2px; }
+    .search input { font: inherit; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; width: 210px; }
+    .search .sug { position: absolute; z-index: 5; left: 0; right: 0; top: 100%; background: #fff; border: 1px solid var(--line); border-radius: 0 0 8px 8px; max-height: 280px; overflow-y: auto; box-shadow: 0 8px 20px rgba(0,0,0,.08); }
+    .search .sug div { padding: 7px 10px; cursor: pointer; display: flex; justify-content: space-between; gap: 10px; }
+    .search .sug div:hover { background: var(--accent-soft); }
+    .search .sug small { color: #8a949b; }
+    #a-input { border-left: 4px solid #C0392B; }
+    #b-input { border-left: 4px solid #3B9AB2; }
+    .main { flex: 1 1 0; min-height: 0; display: grid; grid-template-columns: minmax(300px, 380px) 1fr; gap: 14px; }
+    .left { min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    .verdict { font-family: var(--display); font-size: 20px; line-height: 1.25; }
+    .vsub { color: #5a6b73; font-size: 12.5px; }
+    .pc { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+    .pc h3 { margin: 0 0 5px; font-size: 15px; }
+    .pc.a h3 { color: #C0392B; } .pc.b h3 { color: #3B9AB2; }
+    .pc .row { display: flex; justify-content: space-between; font-size: 13px; padding: 1.5px 0; }
+    .pc .row span:first-child { color: #5a6b73; }
+    .note { color: #8a949b; font-size: 11px; line-height: 1.45; }
+    .charts { min-height: 0; display: flex; flex-direction: column; gap: 12px; }
+    .chart { flex: 1 1 0; min-height: 0; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px 8px; display: flex; flex-direction: column; }
+    .chart h4 { margin: 0; font-size: 13.5px; }
+    .chart p { margin: 1px 0 4px; color: #5a6b73; font-size: 11.5px; }
+    .cv { flex: 1 1 0; min-height: 0; }
+    canvas { width: 100%; height: 100%; display: block; }
+    /* NB: don't call this .empty — styles.css defines .empty as a fixed inset-0
+       overlay for the app pages, which silently swallows all clicks/scrolling */
+    .ph-empty { color: #8a949b; margin: auto; text-align: center; font-size: 14px; grid-column: 1 / -1; }
+    .err { color: #c0392b; }
+    /* .main sets display:grid, which would beat the UA [hidden] rule */
+    [hidden] { display: none !important; }
+    @media (max-width: 760px) { body { overflow: auto; } .page { height: auto; } .shell { flex: none; } .main { grid-template-columns: 1fr; } .chart .cv { height: 180px; flex: none; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="page-head">
+      <div class="ph-title"><a href="index.html"></a></div>
+      <nav class="ph-nav" data-page="compare"></nav>
+      <div class="ph-meta" data-copy="compare.brandSuffix"></div>
+    </header>
+
+    <div class="shell">
+    <div class="head">
+      <div class="roleseg" id="role">
+        <button data-role="taker" class="on" data-copy="compare.roleTakers"></button>
+        <button data-role="keeper" data-copy="compare.roleKeepers"></button>
+      </div>
+      <div class="roleseg" id="estimand">
+        <button data-est="marginal" class="on" data-copy="compare.estMarginal"
+                data-copy-title="compare.estMarginalTitle"></button>
+        <button data-est="in_game" data-copy="compare.estIngame"
+                data-copy-title="compare.estIngameTitle"></button>
+        <button data-est="shootout" data-copy="compare.estShootout"
+                data-copy-title="compare.estShootoutTitle"></button>
+      </div>
+      <div class="search"><label for="a-input" data-copy="compare.labelA"></label>
+        <input id="a-input" autocomplete="off" spellcheck="false" data-copy-placeholder="compare.searchPlaceholder" /><div class="sug" id="a-sug" hidden></div>
+      </div>
+      <div class="search"><label for="b-input" data-copy="compare.labelB"></label>
+        <input id="b-input" autocomplete="off" spellcheck="false" data-copy-placeholder="compare.searchPlaceholder" /><div class="sug" id="b-sug" hidden></div>
+      </div>
+      <button class="btn-export" id="snap" style="margin-left:auto" hidden data-copy="common.screenshot"></button>
+    </div>
+
+    <div class="main" id="out" hidden>
+      <div class="left">
+        <div class="verdict" id="verdict"></div>
+        <div class="vsub" id="verdict-sub"></div>
+        <div class="pc a" id="card-a"></div>
+        <div class="pc b" id="card-b"></div>
+        <p class="note" id="note"></p>
+      </div>
+      <div class="charts">
+        <div class="chart">
+          <h4 id="dens-title"></h4>
+          <p id="dens-sub"></p>
+          <div class="cv"><canvas id="dens"></canvas></div>
+        </div>
+        <div class="chart">
+          <h4 id="diff-title"></h4>
+          <p data-copy="compare.diffSub"></p>
+          <div class="cv"><canvas id="diffc"></canvas></div>
+        </div>
+      </div>
+    </div>
+    <div class="main" id="placeholder"><div class="ph-empty"><span data-copy="compare.empty"></span><div class="err" id="err"></div></div></div>
+    </div>
+  </div>
+  <script src="config.js?v=36"></script>
+  <script src="copy.js?v=36"></script>
+  <script src="api-shim.js?v=36"></script>
+  <script src="header.js?v=36"></script>
+  <script src="analytics.js?v=36"></script>
+  <script src="compare.js?v=36"></script>
+</body>
+</html>
