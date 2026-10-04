@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-copy="titles.heatmap"></title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>🥅</text></svg>" />
+  <link rel="stylesheet" href="styles.css?v=36" />
+  <style>
+    /* the shared page-head (styles.css) sits above; the shell is the content
+       area under it, so it flexes into what .page leaves rather than owning
+       the viewport height itself */
+    .shell { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; padding: 14px 18px 16px; box-sizing: border-box; font-family: var(--sans); color: var(--ink); gap: 10px; }
+    .head { flex: 0 0 auto; display: flex; flex-wrap: wrap; gap: 14px; align-items: baseline; }
+    .head .sub { color: #5a6b73; font-size: 12.5px; }
+    .hm-stage { flex: 1 1 0; min-height: 0; position: relative; }
+    .hm-stage canvas { position: absolute; top: 8px; }
+    [hidden] { display: none !important; }
+    @media (max-width: 760px) { body { overflow: auto; } .page { height: auto; } .shell { flex: none; } .hm-stage { height: 340px; flex: none; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="page-head">
+      <div class="ph-title"><a href="index.html"></a></div>
+      <nav class="ph-nav" data-page="heatmap"></nav>
+      <div class="ph-meta" data-copy="heatmap.brandSuffix"></div>
+    </header>
+
+    <div class="shell">
+    <div class="head">
+      <div class="sub" id="subline" data-copy="heatmap.subline"></div>
+      <div class="seg" id="footToggle" style="margin-left:auto">
+        <button data-foot="Left" data-copy="heatmap.footLeft"></button>
+        <button data-foot="Right" class="active" data-copy="heatmap.footRight"></button>
+      </div>
+      <button class="btn-export" id="exportPng" data-copy="common.exportPng"></button>
+    </div>
+    <div class="hm-stage">
+      <canvas id="goalCanvas"></canvas>
+      <div id="chartTip" class="chart-tip hidden"></div>
+    </div>
+    </div>
+  </div>
+  <script src="config.js?v=36"></script>
+  <script src="copy.js?v=36"></script>
+  <script src="api-shim.js?v=36"></script>
+  <script src="header.js?v=36"></script>
+  <script src="analytics.js?v=36"></script>
+  <script src="heatmap.js?v=36"></script>
+</body>
+</html>

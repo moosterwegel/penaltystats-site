@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-copy="titles.shootout"></title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>🎲</text></svg>" />
+  <link rel="stylesheet" href="styles.css?v=36" />
+  <style>
+    body { overflow: auto; }
+    .shell { max-width: 1180px; margin: 0 auto; padding: 14px 18px 40px; box-sizing: border-box; font-family: var(--sans); color: var(--ink); display: flex; flex-direction: column; gap: 14px; }
+    .head { display: flex; flex-wrap: wrap; gap: 14px; align-items: baseline; }
+    .head .sub { color: #5a6b73; font-size: 12.5px; }
+    .teams { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .team { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+    .team h3 { margin: 0; font-size: 15px; display: flex; align-items: baseline; gap: 8px; }
+    .team h3 span:not(:empty)::before { content: "— "; }
+    .team h3 small { color: #8a949b; font-weight: 400; font-size: 11px; }
+    .team.h h3 { color: #C0392B; } .team.a h3 { color: #3B9AB2; }
+    .team.h { border-top: 3px solid #C0392B; } .team.a { border-top: 3px solid #3B9AB2; }
+    .search { position: relative; }
+    .search label { display: block; font-size: 11px; color: #5a6b73; margin-bottom: 2px; }
+    .search input { font: inherit; padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; width: 100%; box-sizing: border-box; }
+    .search .sug { position: absolute; z-index: 5; left: 0; right: 0; top: 100%; background: #fff; border: 1px solid var(--line); border-radius: 0 0 8px 8px; max-height: 260px; overflow-y: auto; box-shadow: 0 8px 20px rgba(0,0,0,.08); }
+    .search .sug div { padding: 7px 10px; cursor: pointer; display: flex; justify-content: space-between; gap: 10px; font-size: 13px; }
+    .search .sug div:hover { background: var(--accent-soft); }
+    .search .sug small { color: #8a949b; }
+    .gk-chip, .tk-row { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 5px 8px; border: 1px solid var(--line); border-radius: 8px; background: #fafafa; }
+    .tk-list { display: flex; flex-direction: column; gap: 5px; }
+    .tk-row .num { color: #8a949b; font-size: 11px; width: 16px; text-align: right; flex: none; }
+    .tk-row .nm { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tk-row .pm { color: #5a6b73; font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .sk { font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .sk.up { color: #188038; } .sk.down { color: #c2402c; }
+    .tk-row .flag, .gk-chip .flag { color: #b26a00; font-size: 10.5px; border: 1px solid #e8c9a0; background: #fdf6ec; border-radius: 5px; padding: 1px 5px; }
+    .tk-row button, .gk-chip button { border: 0; background: none; cursor: pointer; color: #8a949b; font: inherit; font-size: 12px; padding: 1px 3px; border-radius: 4px; flex: none; }
+    .tk-row button:hover, .gk-chip button:hover { background: var(--accent-soft); color: var(--ink); }
+    .tk-row button:disabled { opacity: .3; cursor: default; background: none; }
+    .team .tools { display: flex; gap: 8px; align-items: center; }
+    .team .tools button { border: 1px solid var(--line-2); background: #fff; border-radius: 7px; padding: 4px 10px; font: inherit; font-size: 12px; cursor: pointer; }
+    .team .tools button:hover { background: var(--accent-soft); }
+    .settings { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; font-size: 12.5px; color: #5a6b73; }
+    .settings label { display: flex; align-items: center; gap: 7px; }
+    .settings input[type=number] { font: inherit; width: 62px; padding: 4px 7px; border: 1px solid var(--line); border-radius: 7px; }
+    .settings select { font: inherit; padding: 4px 7px; border: 1px solid var(--line); border-radius: 7px; background: #fff; }
+    .tk-row.unused { opacity: .45; }
+    /* NB: not .results — styles.css uses that for the app pages' absolute
+       search-dropdown overlay (same trap as .empty, see compare.html) */
+    .sim-results { display: flex; flex-direction: column; gap: 12px; }
+    .verdict { font-family: var(--display); font-size: 21px; line-height: 1.3; }
+    .vsub { color: #5a6b73; font-size: 12.5px; }
+    .winbar-wrap { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+    .winbar-wrap canvas { width: 100%; height: 66px; display: block; }
+    .row2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px; align-items: start; }
+    .chart { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px 8px; }
+    .chart h4 { margin: 0; font-size: 13.5px; }
+    .chart p { margin: 1px 0 6px; color: #5a6b73; font-size: 11.5px; }
+    .chart canvas { width: 100%; display: block; }
+    .sc-table { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+    .sc-table h4 { margin: 0 0 6px; font-size: 13.5px; }
+    .sc-table .scroll { max-height: 320px; overflow-y: auto; }
+    .sc-table table { width: 100%; border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+    .sc-table td, .sc-table th { padding: 3px 6px; text-align: right; border-bottom: 1px solid var(--line); }
+    .sc-table th { color: #5a6b73; font-weight: 500; font-size: 11px; text-align: right; }
+    .sc-table td:first-child, .sc-table th:first-child { text-align: left; }
+    .note { color: #8a949b; font-size: 11px; line-height: 1.45; }
+    .ph-empty { color: #8a949b; text-align: center; font-size: 14px; padding: 40px 0; }
+    .err { color: #c0392b; }
+    [hidden] { display: none !important; }
+    .busy { opacity: .55; transition: opacity .15s; }
+    @media (max-width: 820px) { .teams, .row2 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <!-- full-bleed header, outside the centred shell: the nav must start at the
+       same x as on every other page, and the shell is a 1180px column -->
+  <header class="page-head">
+    <div class="ph-title"><a href="index.html"></a></div>
+    <nav class="ph-nav" data-page="shootout"></nav>
+    <div class="ph-meta" data-copy="shootout.brandSuffix"></div>
+  </header>
+  <div class="shell">
+    <div class="head">
+      <div class="sub" data-copy="shootout.subline"></div>
+      <button class="btn-export" id="snap" style="margin-left:auto" hidden data-copy="common.screenshot"></button>
+    </div>
+
+    <div class="teams">
+      <div class="team h" id="team-home">
+        <h3><span data-copy="shootout.teamA"></span><span id="home-label"></span> <small id="first-home"></small></h3>
+        <div class="search"><label for="home-team-input" data-copy="shootout.fillFromTeam"></label>
+          <input id="home-team-input" autocomplete="off" spellcheck="false" data-copy-placeholder="shootout.fillFromTeamPlaceholderA" />
+          <div class="sug" id="home-team-sug" hidden></div>
+        </div>
+        <div class="search"><label for="home-gk-input" data-copy="shootout.gkLabelHome"></label>
+          <input id="home-gk-input" autocomplete="off" spellcheck="false" data-copy-placeholder="shootout.gkPlaceholder" />
+          <div class="sug" id="home-gk-sug" hidden></div>
+        </div>
+        <div id="home-gk-chip"></div>
+        <div class="search"><label for="home-tk-input" data-copy="shootout.takersLabel"></label>
+          <input id="home-tk-input" autocomplete="off" spellcheck="false" data-copy-placeholder="shootout.takersPlaceholder" />
+          <div class="sug" id="home-tk-sug" hidden></div>
+        </div>
+        <div class="tk-list" id="home-tk-list"></div>
+        <div class="tools">
+          <button id="home-sort" data-copy="shootout.orderBySkill"></button>
+          <span class="note" id="home-order-note"></span>
+        </div>
+      </div>
+
+      <div class="team a" id="team-away">
+        <h3><span data-copy="shootout.teamB"></span><span id="away-label"></span> <small id="first-away"></small></h3>
+        <div class="search"><label for="away-team-input" data-copy="shootout.fillFromTeam"></label>
+          <input id="away-team-input" autocomplete="off" spellcheck="false" data-copy-placeholder="shootout.fillFromTeamPlaceholderB" />
+          <div class="sug" id="away-team-sug" hidden></div>
+        </div>
+        <div class="search"><label for="away-gk-input" data-copy="shootout.gkLabelAway"></label>
+          <input id="away-gk-input" autocomplete="off" spellcheck="false" data-copy-placeholder="shootout.gkPlaceholder" />
+          <div class="sug" id="away-gk-sug" hidden></div>
+        </div>
+        <div id="away-gk-chip"></div>
+        <div class="search"><label for="away-tk-input" data-copy="shootout.takersLabel"></label>
+          <input id="away-tk-input" autocomplete="off" spellcheck="false" data-copy-placeholder="shootout.takersPlaceholder" />
+          <div class="sug" id="away-tk-sug" hidden></div>
+        </div>
+        <div class="tk-list" id="away-tk-list"></div>
+        <div class="tools">
+          <button id="away-sort" data-copy="shootout.orderBySkill"></button>
+          <span class="note" id="away-order-note"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings">
+      <label><span data-copy="shootout.baseLabelPre"></span>
+        <input type="number" id="base-input" min="40" max="95" step="1" value="72" />%
+        <span data-copy="shootout.baseLabelPost"></span>
+        <span id="base-info" data-copy-title="shootout.baseHint">ⓘ</span>
+      </label>
+      <label><span data-copy="shootout.firstKick"></span>
+        <select id="first-select">
+          <option value="coin" data-copy="shootout.firstCoin"></option>
+          <option value="home" data-copy="shootout.teamA"></option>
+          <option value="away" data-copy="shootout.teamB"></option>
+        </select>
+      </label>
+      <label data-copy-title="shootout.funHint">
+        <input type="checkbox" id="fun-toggle" /> <span data-copy="shootout.funToggle"></span>
+      </label>
+      <span data-copy="shootout.rules"></span>
+    </div>
+
+    <div class="sim-results" id="results" hidden>
+      <div>
+        <div class="verdict" id="verdict"></div>
+        <div class="vsub" id="verdict-sub"></div>
+      </div>
+      <div class="winbar-wrap"><canvas id="winbar"></canvas></div>
+      <div class="row2">
+        <div class="chart">
+          <h4 data-copy="shootout.scorelinesTitle"></h4>
+          <p id="sc-sub" data-copy="shootout.scorelinesSub"></p>
+          <canvas id="scorelines" height="380"></canvas>
+        </div>
+        <div class="sc-table">
+          <h4 data-copy="shootout.allScorelines"></h4>
+          <div class="scroll"><table>
+            <thead><tr><th data-copy="shootout.colScore"></th><th data-copy="shootout.colWinner"></th><th data-copy="shootout.colShare"></th></tr></thead>
+            <tbody id="sc-body"></tbody>
+          </table></div>
+        </div>
+      </div>
+      <p class="note" id="note"></p>
+    </div>
+    <div class="ph-empty" id="placeholder"><span data-copy="shootout.empty"></span><div class="err" id="err"></div></div>
+  </div>
+  <script src="config.js?v=36"></script>
+  <script src="copy.js?v=36"></script>
+  <script src="api-shim.js?v=36"></script>
+  <script src="header.js?v=36"></script>
+  <script src="analytics.js?v=36"></script>
+  <script src="shootout.js?v=36"></script>
+</body>
+</html>

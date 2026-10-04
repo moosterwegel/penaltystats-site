@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-copy="titles.keepers"></title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>🧤</text></svg>" />
+  <link rel="stylesheet" href="styles.css?v=36" />
+</head>
+<body data-role="keeper">
+  <div class="page">
+    <header class="page-head">
+      <div class="ph-title"><a href="index.html"></a></div>
+      <nav class="ph-nav" data-page="keepers"></nav>
+      <div class="ph-meta" id="phMeta"></div>
+      <div class="combo ph-search">
+        <input id="search" type="text" data-copy-placeholder="common.searchKeeper" autocomplete="off" />
+        <ul id="results" class="results hidden"></ul>
+      </div>
+    </header>
+
+    <!-- TABLE: the default view, one row per goalkeeper; click a row for the card -->
+    <section id="tableView" class="table-view"></section>
+
+    <!-- PLAYER CARD: stat tiles, opened by clicking a row or a search hit
+         (public site only — privately row clicks go to the shot-map page) -->
+    <main class="stage stage-card hidden">
+      <div class="card-head">
+        <button id="backToTable" class="back-link" data-copy="keepers.back"></button>
+        <div class="rp-name" id="cardName"></div>
+        <div class="rp-meta" id="cardMeta"></div>
+        <button class="btn-export card-export" id="cardSnap" hidden data-copy="common.screenshot"></button>
+      </div>
+      <div id="statRow" class="stat-row card"></div>
+    </main>
+  </div>
+
+  <script src="config.js?v=36"></script>
+  <script src="copy.js?v=36"></script>
+  <script src="api-shim.js?v=36"></script>
+  <script src="header.js?v=36"></script>
+  <script src="analytics.js?v=36"></script>
+  <script src="app.js?v=36"></script>
+</body>
+</html>
